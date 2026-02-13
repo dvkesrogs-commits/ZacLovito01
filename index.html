@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZacLivito.com</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* --- Theme Variables --- */
+    :root {
+      --bg-color: #fff; --text-color: #333; --header-bg: #fff;
+      --header-shadow: rgba(0,0,0,0.05); --card-bg: #f9f4f4;
+      --btn-bg: #E5398D; --btn-text: #fff;
+    }
+    body.dark-mode {
+      --bg-color: #121212; --text-color: #e0e0e0; --header-bg: #1e1e1e;
+      --header-shadow: rgba(255,255,255,0.05); --card-bg: #2a2a2a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { background: var(--bg-color); color: var(--text-color); line-height: 1.6; transition: 0.3s; text-align: center; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; cursor: pointer; }
+
+    /* --- Header --- */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 5%; background: var(--header-bg); position: sticky; top: 0; z-index: 1000;
+      box-shadow: 0 2px 10px var(--header-shadow);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 1.4rem; }
+    .logo img { height: 65px; width: auto; }
+    .header-right { display: flex; align-items: center; gap: 20px; }
+    nav ul { list-style: none; display: flex; gap: 20px; }
+    .hamburger { display: none; font-size: 1.8rem; cursor: pointer; }
+    .theme-switcher { background: none; border: none; cursor: pointer; font-size: 1.4rem; }
+
+    /* --- Hero Slider --- */
+    .slider-container { width: 100%; height: 70vh; position: relative; overflow: hidden; }
+    .slide {
+      width: 100%; height: 100%; display: none; background-size: cover; background-position: center;
+      position: relative; align-items: center; justify-content: center;
+    }
+    .slide.active { display: flex; animation: slideFade 0.8s ease-in-out; }
+    @keyframes slideFade { from { opacity: 0.4; } to { opacity: 1; } }
+    .slide-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); }
+    .slide-content { position: relative; z-index: 5; color: #fff; max-width: 850px; padding: 20px; }
+    .btn { background: var(--btn-bg); color: var(--btn-text); padding: 14px 40px; border-radius: 35px; font-weight: 600; display: inline-block; margin-top: 20px; }
+
+    .slider-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.15); color: white; border: none;
+      width: 50px; height: 80px; cursor: pointer; z-index: 20;
+      font-size: 1.5rem; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+    }
+    .slider-arrow:hover { background: rgba(255, 255, 255, 0.3); }
+    .prev-arrow { left: 20px; }
+    .next-arrow { right: 20px; }
+
+    .slider-dots { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
+    .dot { width: 12px; height: 12px; background: rgba(255,255,255,0.4); border-radius: 50%; cursor: pointer; }
+    .dot.active { background: #E5398D; width: 30px; border-radius: 10px; transition: 0.3s; }
+
+    /* --- Collection Scroller --- */
+    .collections-section { padding: 40px 0; background-color: var(--card-bg); }
+    .scroller-container { position: relative; width: 100%; display: flex; align-items: center; padding: 0 10px; }
+    .scroller-wrapper { width: 100%; overflow-x: auto; scroll-behavior: smooth; padding: 20px 0; scrollbar-width: none; }
+    .scroller-wrapper::-webkit-scrollbar { display: none; }
+    .scroller-track { display: flex; gap: 20px; width: max-content; padding: 0 50px; }
+    .collection-item { flex: 0 0 260px; height: 350px; position: relative; border-radius: 15px; overflow: hidden; display: block; }
+    .collection-item img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .nav-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9); color: #333; width: 45px; height: 45px;
+      border-radius: 50%; border: none; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center;
+    }
+    .nav-btn:hover { background: #E5398D; color: #fff; }
+    .left-btn { left: 15px; }
+    .right-btn { right: 15px; }
+
+    .cart-btn {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.3); color: #fff; width: 50px; height: 50px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; transition: 0.3s; border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .collection-item:hover .cart-btn { background: #E5398D; transform: translateX(-50%) scale(1.1); border-color: transparent; }
+
+    /* --- Category Grid --- */
+    .category-section { padding: 80px 5%; max-width: 1400px; margin: 0 auto; }
+    .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; }
+    .category-item img { width: 100%; aspect-ratio: 4 / 6; border-radius: 15px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+    .category-item:hover img { transform: translateY(-10px); }
+    .category-item p { margin-top: 10px; font-weight: 500; }
+
+    /* --- About Section --- */
+    .about { padding: 60px 20px 40px; background: #2a2a2a; color: #fff; }
+    .about-content { 
+      max-width: 850px; margin: 0 auto; display: flex; 
+      flex-direction: column; align-items: center; text-align: center; 
+    }
+    .disclaimer-box { 
+      margin-top: 40px; padding: 20px; border: 1px solid rgba(255,255,255,0.3); 
+      border-radius: 10px; font-size: 0.85rem; width: 100%; max-width: 700px; transition: 0.3s;
+    }
+    .disclaimer-box:hover { border-color: #E5398D; background: rgba(229, 57, 141, 0.1); box-shadow: 0 0 15px rgba(229, 57, 141, 0.2); }
+    .about-socials { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .social-icons { display: flex; gap: 30px; font-size: 1.8rem; margin-bottom: 5px; }
+    .social-icons a:hover { color: #E5398D; transform: translateY(-3px); transition: 0.3s; }
+    .contact-email { color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 5px;}
+
+    @media (max-width: 768px) {
+      .slider-arrow, .nav-btn { display: none; }
+      .category-grid { grid-template-columns: repeat(2, 1fr); }
+      .hamburger { display: block; }
+      nav { display: none; width: 100%; position: absolute; top: 100%; left: 0; background: var(--header-bg); padding: 20px; }
+      nav.active { display: block; }
+    }
+  </style>
+</head>
+<body class="light-mode">
+
+  <header>
+    <a href="#" class="logo">
+      <img src="zac-logo-no-bg.png" alt="ZF Logo" id="logo-img">
+      <span>Lovito Collection</span>
+    </a>
+    <div class="header-right">
+      <nav id="nav-menu">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#collections">Collections</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </nav>
+      <button class="theme-switcher" id="theme-switcher">🌙</button>
+      <div class="hamburger" id="hamburger">☰</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="slider-container">
+      <button class="slider-arrow prev-arrow" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+      <button class="slider-arrow next-arrow" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+
+      <div class="slide active" style="background-image: url('minimalist-simple-shade-summer-sale-facebook-cover.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+           <h1>Welcome to ZF Finds!</h1>
+           <p>Effortless Style starts here. I've found the hidden gems just for you.</p>
+           <a href="#collections" class="btn">START EXPLORING</a>
+        </div>
+      </div>
+      
+      <div class="slide" style="background-image: url('promo1.jpeg');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+           <h1 style="color: #ffb3d1;">Valentine's Day</h1>
+           <p>UP TO 30% OFF</p>
+           <a href="https://s.shopee.ph/4VXFvyFsuo" class="btn">SHOP NOW</a>
+        </div>
+      </div>
+
+      <div class="slider-dots">
+        <span class="dot active" onclick="setSlide(0)"></span>
+        <span class="dot" onclick="setSlide(1)"></span>
+      </div>
+    </section>
+
+    <section class="collections-section" id="collections">
+      <div class="scroller-container">
+        <button class="nav-btn left-btn" onclick="moveLeft()"><i class="fas fa-chevron-left"></i></button>
+        <div class="scroller-wrapper" id="scroll-box">
+          <div class="scroller-track">
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/5fjFRqYOhe" data-desktop="https://s.shopee.ph/5fjFRqYOhe">
+                <img src="l164ed008.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/5AmyqMWltK" data-desktop="https://s.shopee.ph/5AmyqMWltK">
+                <img src="l172ed1013.jpg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/807ADr5dkS" data-desktop="https://s.shopee.ph/807ADr5dkS">
+              <img src="l149ed107.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/40b1T001iu" data-desktop="https://s.shopee.ph/40b1T001iu">
+              <img src="lne122070.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/6pvCqawnkE" data-desktop="https://s.shopee.ph/6pvCqawnkE">
+              <img src="lne122169.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/3Veksyetff" data-desktop="https://s.shopee.ph/3Veksyetff">
+              <img src="lna65570.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/6pvCrdO1IH" data-desktop="https://s.shopee.ph/6pvCrdO1IH">
+              <img src="l171ed219.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/7fUJrXA2nz" data-desktop="https://s.shopee.ph/7fUJrXA2nz">
+              <img src="l154ed326.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+            <a href="javascript:void(0)" class="collection-item device-link" data-mobile="https://s.shopee.ph/gKZWtjKvQ" data-desktop="https://s.shopee.ph/gKZWtjKvQ">
+              <img src="lne30296.jpeg"><div class="cart-btn"><i class="fas fa-shopping-cart"></i></div>
+            </a>
+          </div>
+        </div>
+        <button class="nav-btn right-btn" onclick="moveRight()"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <section class="category-section">
+        <div class="category-grid">
+           <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/8zzgxsq1NA" data-desktop="https://s.shopee.ph/8zzgxsq1NA">
+             <img src="mens-collection.png"><p>Mens Collections</p>
+           </a>
+           <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/1Vtg2MhJvg" data-desktop="https://s.shopee.ph/1Vtg2MhJvg">
+             <img src="womens-collections.png"><p>Womens Collections</p>
+           </a>
+           <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/3B1u1UCsdN" data-desktop="https://s.shopee.ph/3B1u1UCsdN">
+            <img src="casual-women.png"><p>Womens Casualwear</p>
+          </a>
+          <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/2B9Mpne02Q" data-desktop="https://s.shopee.ph/2B9Mpne02Q">
+            <img src="mens-casual.png"><p>Mens Casualwear</p>
+          </a>
+          <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/7pnjaVB1DA" data-desktop="https://s.shopee.ph/7pnjaVB1DA">
+            <img src="sportswear-mens.png"><p>Mens Sportswear</p>
+          </a>
+          <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/8V3QNmg3PT" data-desktop="https://s.shopee.ph/8V3QNmg3PT">
+            <img src="sportswear-womens.png"><p>Womens Sportswear</p>
+          </a>
+          <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/6VIM1sRZnU" data-desktop="https://s.shopee.ph/6VIM1sRZnU">
+             <img src="bags-collection.png"><p>Bag Collections</p>
+          </a>
+          <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/AKV4ep3DoX" data-desktop="https://s.shopee.ph/AKV4ep3DoX">
+            <img src="womens-plus-size-collections.png"><p>Plus size Collections</p>
+          </a>				
+            <a href="javascript:void(0)" class="category-item device-link" data-mobile="https://s.shopee.ph/6KyvrmGako" data-desktop="https://s.shopee.ph/6KyvrmGako">
+           <img src="shoe-collection.png"><p>Shoe Collections</p>
+         </a>	
+        </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="about-content">
+        <h2>ABOUT ZF x LOVITO FINDS</h2>
+        <p style="color: #E5398D; font-weight: 500; margin-bottom: 20px;">Love what you wear, and wear what you love.</p>
+        <p>Lovito was born from a simple yet powerful idea: fashion that excites and inspires. I'm Zac, your personal style curator!</p>
+        
+        <div class="disclaimer-box">
+          <a href="javascript:void(0)" class="disclaimer-link device-link" data-mobile="https://s.shopee.ph/7pnk4bMb6A" data-desktop="https://s.shopee.ph/7pnk4bMb6A">
+            <p><strong>Disclaimer :</strong> Independent affiliate partner. Not the official Lovito shop.</p>
+          </a>
+        </div>
+
+        <div class="about-socials">
+          <div class="social-icons">
+            <a href="https://s.shopee.ph/2VmBXfHfNc" target="_blank"><i class="fas fa-shopping-bag"></i></a>
+            <a href="https://www.tiktok.com/@zacfinds01" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.facebook.com/ZacFinds01/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          </div>
+          <p class="contact-email">Dvkes.rogs@gmail.com</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Theme Switcher - Lowercase file names applied
+    document.getElementById('theme-switcher').addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('logo-img').src = isDark ? 'zac-logo-white.png' : 'zac-logo-no-bg.png';
+      this.textContent = isDark ? '☀️' : '🌙';
+    });
+
+    // Slider Logic
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+
+    function setSlide(index) {
+      if (index >= slides.length) currentSlide = 0;
+      else if (index < 0) currentSlide = slides.length - 1;
+      else currentSlide = index;
+
+      slides.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+      slides[currentSlide].classList.add('active');
+      dots[currentSlide].classList.add('active');
+    }
+
+    function changeSlide(direction) {
+      setSlide(currentSlide + direction);
+    }
+
+    setInterval(() => changeSlide(1), 5000);
+
+    // Scroller Logic
+    const scrollBox = document.getElementById('scroll-box');
+    function moveRight() {
+      const max = scrollBox.scrollWidth - scrollBox.clientWidth;
+      if (scrollBox.scrollLeft >= max - 10) scrollBox.scrollTo({left: 0, behavior: 'smooth'});
+      else scrollBox.scrollBy({left: 300, behavior: 'smooth'});
+    }
+    function moveLeft() {
+      if (scrollBox.scrollLeft <= 10) scrollBox.scrollTo({left: scrollBox.scrollWidth, behavior: 'smooth'});
+      else scrollBox.scrollBy({left: -300, behavior: 'smooth'});
+    }
+
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('nav-menu').classList.toggle('active');
+    });
+
+    document.querySelectorAll('.device-link').forEach(item => {
+      item.addEventListener('click', function() {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        window.open(isMobile ? this.getAttribute('data-mobile') : this.getAttribute('data-desktop'), '_blank');
+      });
+    });
+  </script>
+</body>
+</html>
